@@ -6,6 +6,8 @@ import Title from "../components/Title";
 import Logo from "../components/Logo";
 import axios from "axios";
 
+const MOCK_API_URL = "https://672f3fc9229a881691f25065.mockapi.io/users"; // MockAPI URL
+
 const Layout = styled.div`
   display: flex;
   height: 100vh;
@@ -13,17 +15,30 @@ const Layout = styled.div`
 
 const Left = styled.div`
   width: 200px;
-  background-color: #f8f9fa;
+  background-color: #f8f9fa; /* 기본 배경색 */
   display: flex;
   flex-direction: column;
   padding: 20px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* 기본 그림자 효과 */
 `;
 
 const Right = styled.div`
   flex: 1;
   padding: 40px;
-  background-color: #ffffff;
+  background: #f5f6fa; /* 밝은 배경 */
+`;
+
+const Card = styled.div`
+  background: #ffffff; /* 카드 배경 */
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1); /* 박스 그림자 */
+  transition: transform 0.3s, box-shadow 0.3s;
+
+  &:hover {
+    transform: translateY(-5px); /* 호버 시 위로 살짝 이동 */
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2); /* 더 깊은 그림자 */
+  }
 `;
 
 const Detail = () => {
@@ -35,12 +50,11 @@ const Detail = () => {
   useEffect(() => {
     const fetchReviewDetail = async () => {
       try {
-        const response = await axios.get(
-          `http://api.kcisa.kr/openapi/API_CCA_146/request?serviceKey=${process.env.REACT_APP_SERVICE_KEY}&numOfRows=1&pageNo=1&id=${id}`
-        );
-        const item = response?.data?.response?.body?.items?.item[0];
-        setReview(item);
+        // MockAPI에서 id 기반 데이터 가져오기
+        const response = await axios.get(`${MOCK_API_URL}/${id}`);
+        setReview(response.data); // 가져온 데이터를 상태로 설정
       } catch (error) {
+        console.error("Error fetching detail:", error);
         setError("데이터를 가져오는 데 실패했습니다.");
       } finally {
         setLoading(false);
@@ -60,30 +74,39 @@ const Detail = () => {
         <Sidebar />
       </Left>
       <Right>
-        <Title text={review.title} />
-        <InfoWrapper>
-          <InfoItem>
-            <strong>주된 책임을 진 개체:</strong> {review.responsibleEntity}
-          </InfoItem>
-          <InfoItem>
-            <strong>발행기관:</strong> {review.publisher}
-          </InfoItem>
-          <InfoItem>
-            <strong>소속(DB):</strong> {review.affiliation}
-          </InfoItem>
-          <InfoItem>
-            <strong>제목:</strong> {review.title}
-          </InfoItem>
-          <InfoItem>
-            <strong>주제 카테고리:</strong> {review.category}
-          </InfoItem>
-          <InfoItem>
-            <strong>등록 날짜:</strong> {review.registrationDate}
-          </InfoItem>
-          <InfoItem>
-            <strong>URL:</strong> <a href={review.url} target="_blank" rel="noopener noreferrer">{review.url}</a>
-          </InfoItem>
-        </InfoWrapper>
+        <Card>
+          {/* <Title text={review.title || "제목 없음"} /> */}
+          <InfoWrapper>
+            <InfoItem>
+              <InfoLabel>주된 책임을 진 개체:</InfoLabel> {review.creator || "정보 없음"}
+            </InfoItem>
+            <InfoItem>
+              <InfoLabel>발행기관:</InfoLabel> {review.publisher || "정보 없음"}
+            </InfoItem>
+            <InfoItem>
+              <InfoLabel>소속(DB):</InfoLabel> {review.collectionDb || "정보 없음"}
+            </InfoItem>
+            <InfoItem>
+              <InfoLabel>제목:</InfoLabel> {review.title || "정보 없음"}
+            </InfoItem>
+            <InfoItem>
+              <InfoLabel>주제 카테고리:</InfoLabel> {review.subjectCategory || "정보 없음"}
+            </InfoItem>
+            <InfoItem>
+              <InfoLabel>등록 날짜:</InfoLabel> {review.regDate || "정보 없음"}
+            </InfoItem>
+            <InfoItem>
+              <InfoLabel>URL:</InfoLabel>{" "}
+              {review.url ? (
+                <StyledLink href={review.url} target="_blank" rel="noopener noreferrer">
+                  {review.url}
+                </StyledLink>
+              ) : (
+                "정보 없음"
+              )}
+            </InfoItem>
+          </InfoWrapper>
+        </Card>
       </Right>
     </Layout>
   );
@@ -95,11 +118,24 @@ const InfoWrapper = styled.div`
 `;
 
 const InfoItem = styled.p`
-  font-size: 1rem;
-  margin-bottom: 10px;
-  line-height: 1.5;
-  strong {
-    color: #555;
+  font-size: 1.1rem;
+  margin-bottom: 15px;
+  line-height: 1.7;
+  color: #2d3436; /* 텍스트 색상 */
+`;
+
+const InfoLabel = styled.strong`
+  color: #0984e3; /* 강조 텍스트 */
+`;
+
+const StyledLink = styled.a`
+  color: #00cec9; /* 링크 색상 */
+  text-decoration: none;
+  font-weight: bold;
+
+  &:hover {
+    color: #6c5ce7;
+    text-decoration: underline;
   }
 `;
 

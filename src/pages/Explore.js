@@ -117,16 +117,6 @@ const Home = ({ data, error }) => {
             )}
           </tbody>
         </Table>
-
-        {/* 내 리스트 보기 */}
-        <MyListContainer>
-          <h2>내 리스트</h2>
-          <ul>
-            {myList.map((item, index) => (
-              <li key={index}>{item.title}</li>
-            ))}
-          </ul>
-        </MyListContainer>
       </Right>
     </Layout>
   );
