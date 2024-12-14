@@ -1,21 +1,22 @@
 import React from "react";
 import styled from "styled-components";
 
-const StyledButton = styled.button`
-  padding: 10px 20px;
-  font-size: 16px;
-  background-color: #ff7f50;
+const ButtonStyled = styled.button`
+  background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
   cursor: pointer;
+  border-radius: 5px;
+  
   &:hover {
-    background-color: #ff6347;
+    background-color: #0056b3;
   }
 `;
 
-const Button = ({ text, onClick }) => {
-  return <StyledButton onClick={onClick}>{text}</StyledButton>;
+const Button = ({ onClick, children }) => {
+  return <ButtonStyled onClick={onClick}>{children}</ButtonStyled>;
 };
 
 export default Button;

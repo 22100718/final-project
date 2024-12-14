@@ -1,52 +1,71 @@
 import React, { useEffect, useState } from "react";
-import { fetchReviews } from "../api/apiClient"; // apiClient.js에서 함수 가져오기
+import { fetchReviews } from "../api/apiClient";
+import Content from "../components/Content";
+import Title from "../components/Title";
+import SearchBar from "../components/SearchBar";
+import Button from "../components/Button"; // 추가 버튼을 위한 컴포넌트
+import { useNavigate } from "react-router-dom"; // 페이지 이동을 위한 useNavigate 추가
 
-function Explore() {
-  const [reviews, setReviews] = useState([]); // 데이터를 저장할 상태
-  const [loading, setLoading] = useState(true); // 로딩 상태 관리
-  const [error, setError] = useState(null); // 오류 상태 관리
+const Explore = ({ onAddToMyList }) => {
+  const [reviews, setReviews] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredReviews, setFilteredReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const navigate = useNavigate(); // navigate 함수 선언
 
   useEffect(() => {
-    // 데이터 요청을 보내는 함수
     const fetchData = async () => {
       try {
-        const params = {
-          pageNo: 1, // 예시: 첫 페이지
-          numOfRows: 10, // 예시: 한 번에 가져올 데이터의 수
-        };
-
-        // API에서 데이터 가져오기
-        const data = await fetchReviews(params);
-        setReviews(data.items); // 데이터를 상태에 저장
+        const data = await fetchReviews();
+        setReviews(data.items);
+        setFilteredReviews(data.items); // 초기값 설정
       } catch (error) {
-        setError("데이터를 가져오는 데 실패했습니다."); // 오류 처리
+        setError("데이터를 가져오는 데 실패했습니다.");
       } finally {
-        setLoading(false); // 로딩 종료
+        setLoading(false);
       }
     };
-
     fetchData();
-  }, []); // 컴포넌트가 처음 렌더링될 때만 호출
+  }, []);
 
-  // 로딩 중일 때 화면에 표시할 내용
+  useEffect(() => {
+    const filtered = reviews.filter((review) =>
+      review.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      review.description.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredReviews(filtered);
+  }, [searchTerm, reviews]);
+
+  const handleAddToMyList = (review) => {
+    onAddToMyList(review); // 부모 컴포넌트에서 리스트에 추가하는 함수 호출
+    navigate("/mylist"); // MyList 페이지로 이동
+  };
+
   if (loading) return <div>로딩 중...</div>;
-
-  // 오류가 발생한 경우
   if (error) return <div>{error}</div>;
 
   return (
     <div>
-      <h1>Explore Page</h1>
-      <ul>
-        {reviews.map((review, index) => (
-          <li key={index}>
-            <h3>{review.title}</h3>
-            <p>{review.description}</p>
-          </li>
-        ))}
-      </ul>
+      <Title text="탐색 페이지" />
+      <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
+      {filteredReviews.length > 0 ? (
+        <div>
+          <Content items={filteredReviews} />
+          <div>
+            {filteredReviews.map((review) => (
+              <div key={review.id}>
+                <Button onClick={() => handleAddToMyList(review)}>추가</Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div>검색 결과가 없습니다.</div>
+      )}
     </div>
   );
-}
+};
 
 export default Explore;

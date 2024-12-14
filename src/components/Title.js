@@ -1,16 +1,12 @@
 import React from "react";
 import styled from "styled-components";
 
-const TitleWrapper = styled.div`
+const Heading = styled.h1`
   font-size: 24px;
-  font-weight: bold;
+  margin-bottom: 20px;
   color: #333;
-  margin: 20px 0;
-  text-align: center;
 `;
 
-const Title = ({ text }) => {
-  return <TitleWrapper>{text}</TitleWrapper>;
-};
+const Title = ({ text }) => <Heading>{text}</Heading>;
 
 export default Title;

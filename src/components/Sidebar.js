@@ -1,34 +1,30 @@
 import React from "react";
-import styled from "styled-components";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
 
-const SidebarWrapper = styled.div`
-  width: 200px;
-  background-color: #f4f4f4;
-  height: 100vh;
+const Nav = styled.nav`
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  gap: 10px;
 `;
 
-const NavItem = styled(Link)`
-  margin: 10px 0;
+const NavLink = styled(Link)`
   text-decoration: none;
   color: #333;
-  font-size: 18px;
+  padding: 10px;
+  border-radius: 3px;
   &:hover {
-    color: #007bff;
+    background-color: #e6e6fa;
   }
 `;
 
 const Sidebar = () => {
   return (
-    <SidebarWrapper>
-      <NavItem to="/">홈</NavItem>
-      <NavItem to="/explore">탐색</NavItem>
-      <NavItem to="/mylist">내 리스트</NavItem>
-    </SidebarWrapper>
+    <Nav>
+      <NavLink to="/">홈</NavLink>
+      <NavLink to="/explore">탐색</NavLink>
+      <NavLink to="/mylist">내 리스트</NavLink>
+    </Nav>
   );
 };
 

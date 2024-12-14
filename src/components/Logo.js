@@ -1,18 +1,13 @@
 import React from "react";
 import styled from "styled-components";
 
-const LogoWrapper = styled.div`
-  display: flex;
-  justify-content: left;
-  align-items: left;
-  height: 100px;
-  font-size: 24px;
+const LogoContainer = styled.div`
+  font-size: 20px;
   font-weight: bold;
-  color: #4b0082;
+  color: #007bff;
+  margin-bottom: 20px;
 `;
 
-const Logo = () => {
-  return <LogoWrapper>📚 마음의 양식</LogoWrapper>;
-};
+const Logo = () => <LogoContainer>📚 마음의 양식</LogoContainer>;
 
 export default Logo;

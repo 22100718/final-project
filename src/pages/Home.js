@@ -1,34 +1,30 @@
 import React from "react";
 import styled from "styled-components";
 import Sidebar from "../components/Sidebar";
-import Logo from "../components/Logo";
 import Title from "../components/Title";
+import Logo from "../components/Logo";
 
 const Layout = styled.div`
   display: flex;
-  height: 100vh; /* 화면 전체 높이를 사용 */
+  height: 100vh;
 `;
 
 const Left = styled.div`
+  width: 200px;
+  background-color: #f8f9fa;
   display: flex;
-  flex-direction: column; /* 세로 방향 정렬 */
-  background-color: #f8f9fa; /* 배경색 설정 */
-  padding: 20px; /* 적당한 여백 추가 */
+  flex-direction: column;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 `;
 
 const Right = styled.div`
-  flex: 1; /* 가변 영역 */
-  display: flex;
-  flex-direction: column; /* 내용도 세로 정렬 가능 */
-  background-color: #ffe4e1;
+  flex: 1;
+  padding: 40px;
+  background-color: #ffffff;
 `;
 
-const Content = styled.div`
-  flex: 1; /* 컨텐츠 영역을 확장 */
-  padding: 20px; /* 내용에 여백 추가 */
-`;
-
-function Home() {
+const Home = ({ myList }) => {
   return (
     <Layout>
       <Left>
@@ -36,13 +32,17 @@ function Home() {
         <Sidebar />
       </Left>
       <Right>
-        <Content>
-          <Title text="마음의 양식" />
-          <p>한국 문학의 아름다움을 세계와 공유하세요!</p>
-        </Content>
+        <Title text="마음의 양식에 오신 것을 환영합니다!" />
+        <p>문학을 통해 새로운 세상을 탐험해 보세요. 감동적인 이야기가 기다리고 있습니다.</p>
+        <h2>내 리스트</h2>
+        <ul>
+          {myList.map((item) => (
+            <li key={item.id}>{item.title}</li>
+          ))}
+        </ul>
       </Right>
     </Layout>
   );
-}
+};
 
 export default Home;

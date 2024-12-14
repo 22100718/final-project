@@ -1,52 +1,38 @@
 import React from "react";
-import styled from "styled-components";
+import { Link } from "react-router-dom";
 
-const ContentWrapper = styled.div`
-  padding: 20px;
-`;
-
-const List = styled.ul`
-  list-style-type: none;
-  padding: 0;
-`;
-
-const ListItem = styled.li`
-  padding: 10px 20px;
-  margin-bottom: 10px;
-  background-color: #fdf5e6;
-  border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const Title = styled.span`
-  font-size: 16px;
-  font-weight: bold;
-`;
-
-const Description = styled.span`
-  font-size: 14px;
-  color: #666;
-`;
-
-const Content = ({ items = [] }) => {
-  if (items.length === 0) {
-    return <p>데이터가 없습니다. 검색어를 입력해보세요!</p>;
+const Content = ({ items }) => {
+  // items가 배열인지, 빈 배열인지 확인
+  if (!Array.isArray(items) || items.length === 0) {
+    return <p>리스트가 비어 있습니다.</p>;
   }
 
   return (
-    <ContentWrapper>
-      <List>
-        {items.map((item) => (
-          <ListItem key={item.id}>
-            <Title>{item.title}</Title>
-            <Description>{item.description}</Description>
-          </ListItem>
-        ))}
-      </List>
-    </ContentWrapper>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
+      {items.map((item) => (
+        <div
+          key={item.id}
+          style={{
+            border: "1px solid #ddd",
+            borderRadius: "8px",
+            padding: "16px",
+            textAlign: "left",
+          }}
+        >
+          <h3>{item.title}</h3>
+          <p>{item.description}</p>
+          <p>
+            <strong>작성자:</strong> {item.author}
+          </p>
+          <p>
+            <strong>작성일:</strong> {item.date}
+          </p>
+          <Link to={`/detail/${item.id}`} style={{ textDecoration: "none", color: "blue" }}>
+            자세히 보기
+          </Link>
+        </div>
+      ))}
+    </div>
   );
 };
 
