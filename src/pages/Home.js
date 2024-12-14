@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Sidebar from "../components/Sidebar";
-import Title from "../components/Title";
 import Logo from "../components/Logo";
 
 const Layout = styled.div`
@@ -24,9 +23,26 @@ const Right = styled.div`
   background-color: #ffffff;
 `;
 
-const Home = ({ myList, data, error, requestCount }) => {
-  // 7개의 데이터만 표시
-  const displayedData = data.slice(0, 7);
+const Home = ({ myList, data, error }) => {
+  const [requestCount, setRequestCount] = useState(0); // 조회 횟수 초기값 0
+  const [pageNo, setPageNo] = useState(1); // 페이지 수
+  const [numOfRows, setNumOfRows] = useState(7); // 데이터 수
+
+  const startIndex = (pageNo - 1) * numOfRows;
+  const endIndex = startIndex + numOfRows;
+  const displayedData = data.slice(startIndex, endIndex);
+
+  const handlePageNoChange = (e) => {
+    const value = Math.max(1, parseInt(e.target.value, 10) || 1);
+    setPageNo(value);
+    setRequestCount((prev) => prev + 1); // 조회 횟수 증가
+  };
+
+  const handleNumOfRowsChange = (e) => {
+    const value = Math.max(1, parseInt(e.target.value, 10) || 1);
+    setNumOfRows(value);
+    setRequestCount((prev) => prev + 1); // 조회 횟수 증가
+  };
 
   return (
     <Layout>
@@ -35,18 +51,37 @@ const Home = ({ myList, data, error, requestCount }) => {
         <Sidebar />
       </Left>
       <Right>
-        <Title text="마음의 양식에 오신 것을 환영합니다!" />
-        <p>문학을 통해 새로운 세상을 탐험해 보세요. 감동적인 이야기가 기다리고 있습니다.</p>
-        <h2>내 리스트</h2>
-        <ul>
-          {myList.map((item) => (
-            <li key={item.id}>{item.title}</li>
-          ))}
-        </ul>
-        
-        {/* 데이터 테이블 */}
+        {/* 타이틀 가로 기준 가운데 정렬 */}
+        <StyledTitleContainer>
+          <StyledTitle>마음의 양식에 오신 것을 환영합니다!</StyledTitle>
+        </StyledTitleContainer>
+        <StyledSubTitleContainer>
+          <p>문학을 통해 새로운 세상을 탐험해 보세요. 감동적인 이야기가 기다리고 있습니다.</p>
+        </StyledSubTitleContainer>
+
+        <Controls>
+          <RequestCount>조회 횟수: {requestCount}회</RequestCount>
+          <InputGroup>
+            <label>페이지 수</label>
+            <StyledInput
+              type="number"
+              value={pageNo}
+              onChange={handlePageNoChange}
+              min="1"
+            />
+          </InputGroup>
+          <InputGroup>
+            <label>데이터 수</label>
+            <StyledInput
+              type="number"
+              value={numOfRows}
+              onChange={handleNumOfRowsChange}
+              min="1"
+            />
+          </InputGroup>
+        </Controls>
+
         {error && <ErrorMessage>{error}</ErrorMessage>}
-        <h2>조회 횟수: {requestCount}회</h2>
         <Table>
           <thead>
             <tr>
@@ -92,28 +127,117 @@ const Home = ({ myList, data, error, requestCount }) => {
   );
 };
 
+/* 스타일 정의 */
+
+const StyledTitleContainer = styled.div`
+  display: flex;
+  justify-content: center; /* 가로 기준 가운데 정렬 */
+  margin-bottom: 10px;
+`;
+
+const StyledTitle = styled.h1`
+  font-size: 3rem; /* 폰트 크기 증가 */
+  font-weight: bold;
+  color: #333;
+  transition: transform 0.3s ease, color 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05); /* 제목 커지는 애니메이션 */
+    color: #ffa502; /* 호버 시 색상 변경 */
+  }
+`;
+
+const StyledSubTitleContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+`;
+
+const Controls = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const InputGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  label {
+    font-size: 16px; /* 폰트 크기 증가 */
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 5px;
+  }
+`;
+
+const StyledInput = styled.input`
+  width: 100px;
+  height: 30px;
+  border: 1px solid #ced4da;
+  border-radius: 20px;
+  padding: 5px;
+  text-align: center;
+  outline: none;
+  font-size: 14px;
+
+  &:focus {
+    border-color: #ffa502;
+    box-shadow: 0 0 5px rgba(255, 165, 2, 0.8);
+  }
+`;
+
+const RequestCount = styled.div`
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+`;
+
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
   font-size: 16px;
+  border-radius: 10px; /* 테이블 둥근 모서리 */
+  overflow: hidden; /* 둥근 모서리 유지 */
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 
-  th, td {
-    border: 1px solid #dee2e6;
+  th,
+  td {
+    border: 1px solid #f3e5ab; /* 테두리 색 변경 */
     padding: 15px;
     text-align: center;
+    vertical-align: middle;
   }
 
   th {
-    background-color: #5c7cfa;
-    color: white;
+    background-color: #ffeaa7; /* 헤더 색상 변경 */
+    color: #333;
     font-weight: bold;
   }
 
-  tbody tr:hover {  
-    background-color: #f1f3f5;
-    transition: background-color 0.3s;
+  tbody tr:nth-child(odd) {
+    background-color: #fffbea;
+  }
+
+  tbody tr:hover {
+    background-color: #ffedcc; /* 호버 시 색상 */
+    transition: background-color 0.3s ease;
+  }
+
+  a {
+    color: #ffa502;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 `;
 
